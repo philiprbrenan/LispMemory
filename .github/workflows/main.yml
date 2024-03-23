@@ -1,4 +1,4 @@
-# Test 2024-03-23 at 03:13:08
+# Test 2024-03-23 at 03:13:46
 
 name: Test
 
@@ -33,4 +33,4 @@ jobs:
 
     - name: Test Lisp Memory
       run:
-        perl -Idtt/lib lispMemory.pm
+        perl -Idtt/lib LispMemory.pm
