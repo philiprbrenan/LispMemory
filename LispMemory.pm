@@ -101,6 +101,26 @@ Not a user or lisp value: $key
 END
  }
 
+sub null($%)                                                                    # The lisp null value
+ {my ($memory, %options) = @_;                                                  # Memory, options
+  q(l)
+ }
+
+sub isNull($$%)                                                                 # Test whether a value is a lisp null value
+ {my ($memory, $value, %options) = @_;                                          # Memory, value, options
+  $value =~ m(\Al\Z)
+ }
+
+#D1 Data Structures                                                             # Standard data structures constructed in lisp memory
+
+#D2 Strings                                                                     # Strings constructed from string memory
+
+
+sub newString($$%)                                                              # Create a string using lisp memory
+ {my ($memory, $string, %options) = @_;                                         # Memory, string, options
+ }
+
+
 #D0
 
 =pod
@@ -504,6 +524,13 @@ my sub  ok($) {!$_[0] and confess; &ok( $_[0])}
 my sub nok($) {&ok(!$_[0])}
 
 # Tests
+
+#latest:;                                                                       #Tnull #TisNull
+if (1)
+ {my $m = new;
+  my $a = $m->null;
+  ok $m->isNull($a);
+ }
 
 #latest:;                                                                       #Tnew #Tput #Tget #TisUser #TgetUser
 if (1)
