@@ -13,6 +13,8 @@ use Data::Table::Text qw(:all);
 
 makeDieConfess;
 
+#D1 Construct                                                                   # Construct lisp memory
+
 sub new(%)                                                                      # Create a new lisp memory
  {my (%options) = @_;                                                           # Options
   genHash(__PACKAGE__,                                                          # Lisp memeory
@@ -33,16 +35,25 @@ sub wrap($$%)                                                                   
 
 sub put($$$%)                                                                   # Map a key to a value
  {my ($memory, $key, $value, %options) = @_;                                    # Memory, key, value, options
+  $memory->isUserOrLisp($key);
+  if ($value =~ m( ))                                                           # A value with a space in it must be a splittable pair
+   {$memory->split($value);
+   }
+  else                                                                          # Otherwise it must be a single value
+   {$memory->isUserOrLisp($value);
+   }
   $memory->map->{$key} = $value
  }
 
 sub get($$%)                                                                    # Get the value of a key in a lisp memory
  {my ($memory, $key, %options) = @_;                                            # Memory, key, options
+  $memory->isUserOrLisp($key);
   $memory->map->{$key}
  }
 
 sub unwrap($$%)                                                                 # Unwrap a value returned from memory to retrieve its original value
  {my ($memory, $value, %options) = @_;                                          # Memory, value, options
+  $memory->isUserOrLisp($value);
   substr($value, 1)
  }
 
@@ -54,7 +65,9 @@ sub join($$$%)                                                                  
 
 sub split($$%)                                                                  # Split a lisp pair into two separate values
  {my ($memory, $value, %options) = @_;                                          # Memory, lisp pair, options
-  split / /, $value
+  my ($a, $b) = split / /, $value;
+  $memory->isUserOrLisp($_) for ($a, $b);
+  ($a, $b)
  }
 
 sub getUser($$%)                                                                # Get a value expected to be a user value and return it as such.
@@ -88,6 +101,398 @@ Not a user or lisp value: $key
 END
  }
 
+#D0
+
+=pod
+
+=encoding utf-8
+
+=head1 Name
+
+LispMemory - Manage Memory in the Manner of Lisp
+
+=head1 Synopsis
+
+=head1 Description
+
+Manage Memory in the Manner of Lisp
+
+
+The following sections describe the methods in each functional area of this
+module.  For an alphabetic listing of all methods by name see L<Index|/Index>.
+
+
+
+=head1 Construct
+
+Construct lisp memory
+
+=head2 new (%options)
+
+Create a new lisp memory
+
+     Parameter  Description
+  1  %options   Options
+
+B<Example:>
+
+
+  #latest:;                                                                           
+  
+
+=head2 newLisp ($memory, %options)
+
+Create a new lisp memory pair. Pairs allow us to fanout quickly to create a structure of any size
+
+     Parameter  Description
+  1  $memory    Memory
+  2  %options   Options
+
+B<Example:>
+
+
+  if (1)                                                                                
+   {my $m = new;
+  
+    my $l = $m->newLisp;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    my $a = $m->wrap(1);
+    my $b = $m->wrap(2);
+    my $p = $m->join($a, $b);
+            $m->put ($l, $p);
+    my $P = $m->get ($l);
+    my ($A, $B) = $m->split($P);
+    is_deeply($m->unwrap($A), 1);
+    is_deeply($m->unwrap($B), 2);
+    ok $m->isLisp($l);
+    ok $m->isUserOrLisp($l);
+   }
+  
+
+=head2 wrap($memory, $value, %options)
+
+Create a new user value
+
+     Parameter  Description
+  1  $memory    Memory
+  2  $value     User value
+  3  %options   Options
+
+B<Example:>
+
+
+  if (1)                                                                                
+   {my $m = new;
+    my $l = $m->newLisp;
+  
+    my $a = $m->wrap(1);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+  
+    my $b = $m->wrap(2);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    my $p = $m->join($a, $b);
+            $m->put ($l, $p);
+    my $P = $m->get ($l);
+    my ($A, $B) = $m->split($P);
+    is_deeply($m->unwrap($A), 1);
+    is_deeply($m->unwrap($B), 2);
+    ok $m->isLisp($l);
+    ok $m->isUserOrLisp($l);
+   }
+  
+
+=head2 put ($memory, $key, $value, %options)
+
+Map a key to a value
+
+     Parameter  Description
+  1  $memory    Memory
+  2  $key       Key
+  3  $value     Value
+  4  %options   Options
+
+B<Example:>
+
+
+  #latest:;                                                                           
+  
+
+=head2 get ($memory, $key, %options)
+
+Get the value of a key in a lisp memory
+
+     Parameter  Description
+  1  $memory    Memory
+  2  $key       Key
+  3  %options   Options
+
+B<Example:>
+
+
+  #latest:;                                                                           
+  
+
+=head2 unwrap  ($memory, $value, %options)
+
+Unwrap a value returned from memory to retrieve its original value
+
+     Parameter  Description
+  1  $memory    Memory
+  2  $value     Value
+  3  %options   Options
+
+B<Example:>
+
+
+  if (1)                                                                                
+   {my $m = new;
+    my $l = $m->newLisp;
+    my $a = $m->wrap(1);
+    my $b = $m->wrap(2);
+    my $p = $m->join($a, $b);
+            $m->put ($l, $p);
+    my $P = $m->get ($l);
+    my ($A, $B) = $m->split($P);
+  
+    is_deeply($m->unwrap($A), 1);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+  
+    is_deeply($m->unwrap($B), 2);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    ok $m->isLisp($l);
+    ok $m->isUserOrLisp($l);
+   }
+  
+
+=head2 join($memory, $a, $b, %options)
+
+Join two values to make a lisp pair
+
+     Parameter  Description
+  1  $memory    Memory
+  2  $a         First value
+  3  $b         Second value
+  4  %options   Key
+
+B<Example:>
+
+
+  if (1)                                                                                
+   {my $m = new;
+    my $l = $m->newLisp;
+    my $a = $m->wrap(1);
+    my $b = $m->wrap(2);
+  
+    my $p = $m->join($a, $b);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+            $m->put ($l, $p);
+    my $P = $m->get ($l);
+    my ($A, $B) = $m->split($P);
+    is_deeply($m->unwrap($A), 1);
+    is_deeply($m->unwrap($B), 2);
+    ok $m->isLisp($l);
+    ok $m->isUserOrLisp($l);
+   }
+  
+
+=head2 split   ($memory, $value, %options)
+
+Split a lisp pair into two separate values
+
+     Parameter  Description
+  1  $memory    Memory
+  2  $value     Lisp pair
+  3  %options   Options
+
+B<Example:>
+
+
+  if (1)                                                                                
+   {my $m = new;
+    my $l = $m->newLisp;
+    my $a = $m->wrap(1);
+    my $b = $m->wrap(2);
+    my $p = $m->join($a, $b);
+            $m->put ($l, $p);
+    my $P = $m->get ($l);
+  
+    my ($A, $B) = $m->split($P);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    is_deeply($m->unwrap($A), 1);
+    is_deeply($m->unwrap($B), 2);
+    ok $m->isLisp($l);
+    ok $m->isUserOrLisp($l);
+   }
+  
+
+=head2 getUser ($memory, $key, %options)
+
+Get a value expected to be a user value and return it as such.
+
+     Parameter  Description
+  1  $memory    Memory
+  2  $key       Key
+  3  %options   Options
+
+B<Example:>
+
+
+  #latest:;                                                                           
+  
+
+=head2 isUser  ($memory, $key, %options)
+
+Test whether a value is a user value
+
+     Parameter  Description
+  1  $memory    Memory
+  2  $key       Key
+  3  %options   Options
+
+B<Example:>
+
+
+  #latest:;                                                                           
+  
+
+=head2 isLisp  ($memory, $key, %options)
+
+Test whether a value is a user value
+
+     Parameter  Description
+  1  $memory    Memory
+  2  $key       Key
+  3  %options   Options
+
+B<Example:>
+
+
+  if (1)                                                                                
+   {my $m = new;
+    my $l = $m->newLisp;
+    my $a = $m->wrap(1);
+    my $b = $m->wrap(2);
+    my $p = $m->join($a, $b);
+            $m->put ($l, $p);
+    my $P = $m->get ($l);
+    my ($A, $B) = $m->split($P);
+    is_deeply($m->unwrap($A), 1);
+    is_deeply($m->unwrap($B), 2);
+  
+    ok $m->isLisp($l);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    ok $m->isUserOrLisp($l);
+   }
+  
+
+=head2 isUserOrLisp($memory, $key, %options)
+
+Test whether a value is a user or lisp value
+
+     Parameter  Description
+  1  $memory    Memory
+  2  $key       Key
+  3  %options   Options
+
+B<Example:>
+
+
+  if (1)                                                                                
+   {my $m = new;
+    my $l = $m->newLisp;
+    my $a = $m->wrap(1);
+    my $b = $m->wrap(2);
+    my $p = $m->join($a, $b);
+            $m->put ($l, $p);
+    my $P = $m->get ($l);
+    my ($A, $B) = $m->split($P);
+    is_deeply($m->unwrap($A), 1);
+    is_deeply($m->unwrap($B), 2);
+    ok $m->isLisp($l);
+  
+    ok $m->isUserOrLisp($l);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+   }
+  
+
+
+=head1 Hash Definitions
+
+
+
+
+=head2 Lisp::Memory Definition
+
+
+Lisp memeory
+
+
+
+
+=head3 Output fields
+
+
+=head4 lisps
+
+Number of lisp pairs
+
+=head4 map
+
+Maps a key to a value
+
+
+
+=head1 Index
+
+
+1 L<get|/get> - Get the value of a key in a lisp memory
+
+2 L<getUser|/getUser> - Get a value expected to be a user value and return it as such.
+
+3 L<isLisp|/isLisp> - Test whether a value is a user value
+
+4 L<isUser|/isUser> - Test whether a value is a user value
+
+5 L<isUserOrLisp|/isUserOrLisp> - Test whether a value is a user or lisp value
+
+6 L<join|/join> - Join two values to make a lisp pair
+
+7 L<new|/new> - Create a new lisp memory
+
+8 L<newLisp|/newLisp> - Create a new lisp memory pair.
+
+9 L<put|/put> - Map a key to a value
+
+10 L<split|/split> - Split a lisp pair into two separate values
+
+11 L<unwrap|/unwrap> - Unwrap a value returned from memory to retrieve its original value
+
+12 L<wrap|/wrap> - Create a new user value
+
+=head1 Installation
+
+This module is written in 100% Pure Perl and, thus, it is easy to read,
+comprehend, use, modify and install via B<cpan>:
+
+  sudo cpan install Lisp::Memory
+
+=head1 Author
+
+L<philiprbrenan@gmail.com|mailto:philiprbrenan@gmail.com>
+
+L<http://prb.appaapps.com|http://prb.appaapps.com>
+
+=head1 Copyright
+
+Copyright (c) 2016-2023 Philip R Brenan.
+
+This module is free software. It may be used, redistributed and/or modified
+under the same terms as Perl itself.
+
+=cut
+
+
+
 goto finish if caller;
 clearFolder(q(out), 99);                                                        # Clear the output folder
 my $start = time;
@@ -95,8 +500,8 @@ eval "use Test::More";
 eval "Test::More->builder->output('/dev/null')" if -e q(/home/phil/);
 eval {goto latest} if -e q(/home/phil/);
 
-my sub  ok($)        {!$_[0] and confess; &ok( $_[0])}
-my sub nok($)        {&ok(!$_[0])}
+my sub  ok($) {!$_[0] and confess; &ok( $_[0])}
+my sub nok($) {&ok(!$_[0])}
 
 # Tests
 
@@ -105,7 +510,7 @@ if (1)
  {my $m = new;
   my $a = $m->wrap(1);
   my $b = $m->wrap(2);
-  $m->put($a, $b);
+          $m->put($a, $b);
   my $v = $m->get($a);
   is_deeply($v,            "u2");
   is_deeply($m->isUser($v),  1);
@@ -113,17 +518,19 @@ if (1)
  }
 
 #latest:;
-if (1)                                                                          #TnewLisp
+if (1)                                                                          #TnewLisp #TisLisp #TisUserOrLisp #Twrap #Tunwrap #Tjoin #Tsplit
  {my $m = new;
   my $l = $m->newLisp;
   my $a = $m->wrap(1);
   my $b = $m->wrap(2);
   my $p = $m->join($a, $b);
-  $m->put($l, $p);
-  my $P = $m->get($l);
+          $m->put ($l, $p);
+  my $P = $m->get ($l);
   my ($A, $B) = $m->split($P);
   is_deeply($m->unwrap($A), 1);
   is_deeply($m->unwrap($B), 2);
+  ok $m->isLisp($l);
+  ok $m->isUserOrLisp($l);
  }
 
 &done_testing;
