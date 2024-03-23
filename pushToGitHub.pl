@@ -83,7 +83,7 @@ jobs:
 
     - name: Test Lisp Memory
       run:
-        perl -Idtt/lib lispMemory.pm
+        perl -Idtt/lib LispMemory.pm
 END
 
   my $f = writeFileUsingSavedToken $user, $repo, $wf, $y;                       # Upload workflow
