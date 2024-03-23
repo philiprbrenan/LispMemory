@@ -137,8 +137,8 @@ Create a new lisp memory
 B<Example:>
 
 
-  #latest:;                                                                           
-  
+  #latest:;
+
 
 =head2 newLisp ($memory, %options)
 
@@ -151,9 +151,9 @@ Create a new lisp memory pair. Pairs allow us to fanout quickly to create a stru
 B<Example:>
 
 
-  if (1)                                                                                
+  if (1)
    {my $m = new;
-  
+
     my $l = $m->newLisp;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my $a = $m->wrap(1);
@@ -167,7 +167,7 @@ B<Example:>
     ok $m->isLisp($l);
     ok $m->isUserOrLisp($l);
    }
-  
+
 
 =head2 wrap($memory, $value, %options)
 
@@ -181,13 +181,13 @@ Create a new user value
 B<Example:>
 
 
-  if (1)                                                                                
+  if (1)
    {my $m = new;
     my $l = $m->newLisp;
-  
+
     my $a = $m->wrap(1);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     my $b = $m->wrap(2);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my $p = $m->join($a, $b);
@@ -199,7 +199,7 @@ B<Example:>
     ok $m->isLisp($l);
     ok $m->isUserOrLisp($l);
    }
-  
+
 
 =head2 put ($memory, $key, $value, %options)
 
@@ -214,8 +214,8 @@ Map a key to a value
 B<Example:>
 
 
-  #latest:;                                                                           
-  
+  #latest:;
+
 
 =head2 get ($memory, $key, %options)
 
@@ -229,8 +229,8 @@ Get the value of a key in a lisp memory
 B<Example:>
 
 
-  #latest:;                                                                           
-  
+  #latest:;
+
 
 =head2 unwrap  ($memory, $value, %options)
 
@@ -244,7 +244,7 @@ Unwrap a value returned from memory to retrieve its original value
 B<Example:>
 
 
-  if (1)                                                                                
+  if (1)
    {my $m = new;
     my $l = $m->newLisp;
     my $a = $m->wrap(1);
@@ -253,16 +253,16 @@ B<Example:>
             $m->put ($l, $p);
     my $P = $m->get ($l);
     my ($A, $B) = $m->split($P);
-  
+
     is_deeply($m->unwrap($A), 1);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     is_deeply($m->unwrap($B), 2);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     ok $m->isLisp($l);
     ok $m->isUserOrLisp($l);
    }
-  
+
 
 =head2 join($memory, $a, $b, %options)
 
@@ -277,12 +277,12 @@ Join two values to make a lisp pair
 B<Example:>
 
 
-  if (1)                                                                                
+  if (1)
    {my $m = new;
     my $l = $m->newLisp;
     my $a = $m->wrap(1);
     my $b = $m->wrap(2);
-  
+
     my $p = $m->join($a, $b);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
             $m->put ($l, $p);
@@ -293,7 +293,7 @@ B<Example:>
     ok $m->isLisp($l);
     ok $m->isUserOrLisp($l);
    }
-  
+
 
 =head2 split   ($memory, $value, %options)
 
@@ -307,7 +307,7 @@ Split a lisp pair into two separate values
 B<Example:>
 
 
-  if (1)                                                                                
+  if (1)
    {my $m = new;
     my $l = $m->newLisp;
     my $a = $m->wrap(1);
@@ -315,7 +315,7 @@ B<Example:>
     my $p = $m->join($a, $b);
             $m->put ($l, $p);
     my $P = $m->get ($l);
-  
+
     my ($A, $B) = $m->split($P);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply($m->unwrap($A), 1);
@@ -323,7 +323,7 @@ B<Example:>
     ok $m->isLisp($l);
     ok $m->isUserOrLisp($l);
    }
-  
+
 
 =head2 getUser ($memory, $key, %options)
 
@@ -337,8 +337,8 @@ Get a value expected to be a user value and return it as such.
 B<Example:>
 
 
-  #latest:;                                                                           
-  
+  #latest:;
+
 
 =head2 isUser  ($memory, $key, %options)
 
@@ -352,8 +352,8 @@ Test whether a value is a user value
 B<Example:>
 
 
-  #latest:;                                                                           
-  
+  #latest:;
+
 
 =head2 isLisp  ($memory, $key, %options)
 
@@ -367,7 +367,7 @@ Test whether a value is a user value
 B<Example:>
 
 
-  if (1)                                                                                
+  if (1)
    {my $m = new;
     my $l = $m->newLisp;
     my $a = $m->wrap(1);
@@ -378,12 +378,12 @@ B<Example:>
     my ($A, $B) = $m->split($P);
     is_deeply($m->unwrap($A), 1);
     is_deeply($m->unwrap($B), 2);
-  
+
     ok $m->isLisp($l);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     ok $m->isUserOrLisp($l);
    }
-  
+
 
 =head2 isUserOrLisp($memory, $key, %options)
 
@@ -397,7 +397,7 @@ Test whether a value is a user or lisp value
 B<Example:>
 
 
-  if (1)                                                                                
+  if (1)
    {my $m = new;
     my $l = $m->newLisp;
     my $a = $m->wrap(1);
@@ -409,11 +409,11 @@ B<Example:>
     is_deeply($m->unwrap($A), 1);
     is_deeply($m->unwrap($B), 2);
     ok $m->isLisp($l);
-  
+
     ok $m->isUserOrLisp($l);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
    }
-  
+
 
 
 =head1 Hash Definitions
@@ -527,6 +527,8 @@ if (1)                                                                          
           $m->put ($l, $p);
   my $P = $m->get ($l);
   my ($A, $B) = $m->split($P);
+  is_deeply($A, $a);
+  is_deeply($B, $b);
   is_deeply($m->unwrap($A), 1);
   is_deeply($m->unwrap($B), 2);
   ok $m->isLisp($l);
