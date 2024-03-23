@@ -1,0 +1,36 @@
+# Test 2024-03-23 at 03:13:08
+
+name: Test
+
+on:
+  push
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: 'main'
+
+    - uses: actions/checkout@v3
+      with:
+        repository: philiprbrenan/DataTableText
+        path: dtt
+
+    - name: Install Tree
+      run:
+        sudo apt install tree
+
+    - name: Tree
+      run:
+        tree
+
+    - name: Cpan
+      run:  sudo cpan install -T Data::Dump
+
+    - name: Test Lisp Memory
+      run:
+        perl -Idtt/lib lispMemory.pm
