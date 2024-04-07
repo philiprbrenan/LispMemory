@@ -203,6 +203,8 @@ sub getArray($$$%)                                                              
 
 =encoding utf-8
 
+=for html <p><a href="https://github.com/philiprbrenan/LispMemory"><img src="https://github.com/philiprbrenan/LispMemory/workflows/Test/badge.svg"></a>
+
 =head1 Name
 
 LispMemory - Manage Memory in the Manner of Lisp
